@@ -29,7 +29,9 @@ else
   graphite_web_service_resource = 'runit_service[graphite-web]'
 end
 
-password = node['graphite']['password']
+# If node['graphite']['password'] is not set, the set admin script will generate one
+password = nil
+password = node['graphite']['password'] if node['graphite']['password']
 if node['graphite']['encrypted_data_bag']['name']
   data_bag_name = node['graphite']['encrypted_data_bag']['name']
   data_bag_item = Chef::EncryptedDataBagItem.load(data_bag_name, 'graphite')

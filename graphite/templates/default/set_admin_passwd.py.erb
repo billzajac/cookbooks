@@ -2,17 +2,27 @@
 
 # cribbed from https://gist.github.com/97863dc8171c7b473c94#file_set_admin_password.py
 
-import os,sys
+import os,sys,random
 sys.path.append("<%= node['graphite']['doc_root']%>/graphite")
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from django.contrib.auth.models import User
 
 username = sys.argv[1]
-password = sys.argv[2]
+
+if len(sys.argv) > 2:
+    password = sys.argv[2]
+else:
+    # Generate a random hex password 30 chars long
+    password = '%030x' % random.randrange(16**30)
+    print "NOTE: Generated password for user: " + username + " " + password
 
 try:
     u = User.objects.get(username__exact=username)
+except:
+    print "%s is not a user" % username
+
+try:
     u.set_password(password)
     u.save()
 except:
-    print "%s is not a user" % username
+    print "Could not save new password for user: %s" % username
