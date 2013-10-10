@@ -20,33 +20,25 @@
 include_recipe "build-essential"
 include_recipe "git"
 
-include_recipe "nodejs"
+package "nodejs"
 
-statsd_version = node[:statsd][:sha]
-
-git "#{node[:statsd][:tmp_dir]}/statsd" do
-  repository node[:statsd][:repo]
-  reference statsd_version
-  action :sync
-  notifies :run, "execute[build debian package]"
+execute "checkout statsd" do
+  command "git clone https://github.com/etsy/statsd"
+  creates "/tmp/statsd"
+  cwd "/tmp"
 end
 
 package "debhelper"
 
-# Fix the debian changelog file of the repo
-template "#{node[:statsd][:tmp_dir]}/statsd/debian/changelog" do
-  source "changelog.erb"
-end
-
 execute "build debian package" do
   command "dpkg-buildpackage -us -uc"
-  cwd "#{node[:statsd][:tmp_dir]}/statsd"
-  creates "#{node[:statsd][:tmp_dir]}/statsd_#{node[:statsd][:package_version]}_all.deb"
+  creates "/tmp/statsd_#{node[:statsd][:version]}_all.deb"
+  cwd "/tmp/statsd"
 end
 
 dpkg_package "statsd" do
   action :install
-  source "#{node[:statsd][:tmp_dir]}/statsd_#{node[:statsd][:package_version]}_all.deb"
+  source "/tmp/statsd_#{node[:statsd][:version]}_all.deb"
 end
 
 template "/etc/statsd/rdioConfig.js" do
@@ -61,6 +53,13 @@ template "/etc/statsd/rdioConfig.js" do
   notifies :restart, "service[statsd]"
 end
 
+directory "/usr/share/statsd/scripts" do
+  owner "root"
+  group "root"
+  mode 00644
+  action :create
+end
+
 cookbook_file "/usr/share/statsd/scripts/start" do
   source "upstart.start"
   mode 0755
@@ -71,7 +70,7 @@ cookbook_file "/etc/init/statsd.conf" do
   mode 0644
 end
 
-user node[:statsd][:user] do
+user "statsd" do
   comment "statsd"
   system true
   shell "/bin/false"

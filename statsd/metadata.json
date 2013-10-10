@@ -1,9 +1,9 @@
 {
   "name": "statsd",
   "description": "Installs/Configures statsd",
-  "long_description": "= DESCRIPTION:\n\nInstalls and configures Statsd (http://github.com/etsy/statsd)\n\n= REQUIREMENTS:\n\nUbuntu 11.04 (Natty)\n\n= ATTRIBUTES:\n\n= USAGE:\n\n= CAVEATS:\n\n",
-  "maintainer": "Jon Wood",
-  "maintainer_email": "jon@blankpad.net",
+  "long_description": "= DESCRIPTION:\n\nInstalls and configures Statsd (http://github.com/etsy/statsd)\n\n= REQUIREMENTS:\n\nUbuntu 11.04 or greater\n\n",
+  "maintainer": "William Zajac",
+  "maintainer_email": "git@billzajac.com",
   "license": "Apache 2.0",
   "platforms": {
     "ubuntu": ">= 0.0.0"
