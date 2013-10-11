@@ -56,7 +56,7 @@ end
 directory "/usr/share/statsd/scripts" do
   owner "root"
   group "root"
-  mode 00644
+  mode 00755
   action :create
 end
 
