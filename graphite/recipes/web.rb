@@ -33,7 +33,8 @@ end
 password = nil
 if node['graphite']['generate_password'] == 'true' or not node['graphite'].has_key?('password')
   range = [*'0'..'9', *'a'..'z', *'A'..'Z']
-  password = Array.new(8){range.sample}.join
+  # Let's go with 32 chars of alphanumeric
+  password = Array.new(32){range.sample}.join
   Chef::Log.info "NOTE: Generated the following root password: #{password}"
 else
   password = node['graphite']['password']
