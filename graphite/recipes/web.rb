@@ -29,14 +29,14 @@ else
   graphite_web_service_resource = 'runit_service[graphite-web]'
 end
 
-# If node['graphite']['password'] is not set, generate one
+# If node['graphite']['password'] is not set or node['graphite']['generate_password'] is set, generate one
 password = nil
-if node['graphite'].has_key?('password')
-  password = node['graphite']['password']
-else
+if node['graphite']['generate_password'] == 'true' or not node['graphite'].has_key?('password')
   range = [*'0'..'9', *'a'..'z', *'A'..'Z']
   password = Array.new(8){range.sample}.join
   Chef::Log.info "NOTE: Generated the following root password: #{password}"
+else
+  password = node['graphite']['password']
 end
 if node['graphite']['encrypted_data_bag']['name']
   data_bag_name = node['graphite']['encrypted_data_bag']['name']
